@@ -1,5 +1,5 @@
+# Load packages and set working directory.
 library(tidyverse)
-library(rhmmer)
 library(treeio)
 library(ggtree)
 library(phangorn)
@@ -8,6 +8,9 @@ library(castor)
 library(ggbreak)
 library(ggprism)
 
+setwd("C://Users//cassp//Box Sync//Feaga Lab//Cassidy Prince//Katrina")
+
+# Define function to format tables for the tree.
 table_for_tree = function(phylum, gene, accessions){
   table = as.data.frame(prop.table(table(phylum, gene), margin = 1)*100)
   table_new = data.frame(cbind(gene = table$Freq[table$gene == "TRUE"]))
@@ -15,13 +18,17 @@ table_for_tree = function(phylum, gene, accessions){
   return(table_new)
 }
 
-setwd("C://Users//cassp//Box Sync//Feaga Lab//Cassidy Prince//Katrina")
-
+# Upload dataframe containing NCBI Assembly and Nucleotide accession numbers, assembly statistics, taxonomy, and gene presence.(Table S1).
 df_GCF_nc_compressed = read.csv("ribo_rescue_df.csv") 
 
+# Separate into one Nucleotide accession number per row.
 df_GCF_nc = separate_rows(df_GCF_nc_compressed, nuccore, sep = ";")
 
-# Collapsed tree
+
+
+####### ---- Collapsed tree ---- #######
+
+# Upload 16S tree of all assemblies.
 tree = read.newick("C://Users//cassp//Box Sync//Feaga Lab//Cassidy Prince//Katrina//16S_fasttree.tre")
 tree = get_subtree_with_tips(tree, only_tips = df_GCF_nc$nuccore)$subtree
 tree_tip_GCF = left_join(data.frame(tree$tip.label), df_GCF_nc, by = join_by("tree.tip.label" == "nuccore"), multiple = "any")
@@ -37,7 +44,7 @@ random = dfShort %>%
   ungroup()
 
 rownames(random) = random$assembly
-#If the row names and the first column don't match, the tip labels don't get written... So weird.
+
 #write.csv(random, "random_genomes_for_tree_new.csv")
 
 random = read.csv("C://Users//cassp//Box Sync//Feaga Lab//Cassidy Prince//Katrina//random_genomes_for_tree_new.csv")
@@ -71,7 +78,7 @@ p1 = gheatmap(p, genes, offset = 6.7, width=0.7, font.size=3.5, colnames = TRUE,
 
 ggsave("C://Users//cassp//Box Sync//Feaga Lab//Cassidy Prince//Katrina//Figures//ribo_rescue_collapsed_tree_7_24_24.png", p1, width = 8.5, height = 6.4, dpi = 600, units = "in")
 
-####Stats
+####### ---- % with each gene ---- #######
 
 rrf_table = data.frame(cbind(smpB = table(df_GCF_nc_compressed$smpB), ssrA = table(df_GCF_nc_compressed$ssrA), arfA = table(df_GCF_nc_compressed$arfA), arfB = table(df_GCF_nc_compressed$arfB), rqcH = table(df_GCF_nc_compressed$rqcH), mutS2 = table(df_GCF_nc_compressed$mutS2), smrB = table(df_GCF_nc_compressed$smrB)))
 
@@ -81,6 +88,8 @@ format(round(rrf_prop_table*100,1),nsmall=1)
 format(rrf_table,nsmall=1)
 df_GCF_nc_compressed %>%
   summarise(sum = sum(ssrA == TRUE|smpB == TRUE), n = n(), perc = sum/n)
+
+####### ---- Figure 5 ---- #######
 
 #rqcH and mutS2
 rqcH = factor(c("without", "with", "without","with"))
@@ -99,7 +108,6 @@ plot = ggplot(data =  conf, mapping = aes(x = rqcH, y = mutS2)) +
 
 ggsave("C://Users//cassp//Box Sync//Feaga Lab//Cassidy Prince//Katrina//Figures//rqcH_mutS2_confmatrix_7_26_24.png", plot, width = 5, height = 3.5, dpi = 600, units = "in")
 
-
 #ssrA and smpB
 ssrA = factor(c("without", "with", "without","with"))
 smpB = factor(c("without", "without", "with", "with"))
@@ -116,7 +124,7 @@ plot = ggplot(data =  conf, mapping = aes(x = ssrA, y = smpB)) +
 
 ggsave("C://Users//cassp//Box Sync//Feaga Lab//Cassidy Prince//Katrina//Figures//ssrA_smrB_confmatrix_7_26_24.png", plot, width = 5, height = 3.5, dpi = 600, units = "in")
 
-# Tables
+####### ---- Table 1 ---- #######
 random_IDs = random %>%
   select(phylum, assembly)
 
@@ -132,7 +140,7 @@ sup_table_final = sup_table %>%
 
 write_csv(sup_table_final, "C://Users//cassp//Box Sync//Feaga Lab//Cassidy Prince//Katrina//ribo_rescue_gene_counts.csv")
 
-# Supp table 1
+####### ---- Table S1 ---- #######
 
 df_lineage_string = read.csv("C://Users//cassp//Box Sync//Feaga Lab//Cassidy Prince//Katrina//ref_lineage.txt", col.names = "organism.taxId", header = FALSE) %>% 
   separate(organism.taxId, into = c("organism.taxId", "taxonomy"), sep = "\\s", extra = "merge")
@@ -146,33 +154,3 @@ sup_table_2 = inner_join(df_GCF_nc_compressed, df_lineage_string, unmatched = "d
 
 
 write.csv(sup_table_2, file = "C://Users//cassp//Box Sync//Feaga Lab//Cassidy Prince//Katrina//Table_S1_spp_and_genes_7_26_24.csv")
-
-
-#### Big tree
-dfShort = dfShort %>%
-  distinct(assembly, .keep_all = TRUE)
-
-smpB = data.frame(dfShort$smpB)
-rownames(smpB) = dfShort$assembly
-ssrA = data.frame(dfShort$ssrA)
-rownames(smpB) = dfShort$assembly
-phylum = data.frame(dfShort$phylum)
-rownames(phylum) = dfShort$assembly
-
-df_big_tree = dfShort %>% select(smpB, ssrA, phylum) 
-rownames(df_big_tree) = dfShort$assembly
-
-subtree = get_subtree_with_tips(tree, only_tips = rownames(df_big_tree))$subtree
-big_tree_mid = midpoint(subtree)
-
-p = ggtree(big_tree_mid, layout='circular', size=0.2)
-
-p1 = gheatmap(p, df_big_tree, offset = 0, width=0.2, font.size=1.5, colnames = FALSE, color=NA) + 
-  scale_fill_manual(values=c("TRUE" = "white", "FALSE" = "black"), na.value = "white") + 
-  new_scale_fill()
-
-p2 = gheatmap(p1, phylum, offset = 0.8, width=0.05, font.size=1, colnames = FALSE, color=NA) 
-
-
-
-ggsave(".//Figures//smpB_ssrA_tree.png", p2, width = 15, height = 12, dpi = 600, units = "in")
