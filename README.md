@@ -1,2 +1,8 @@
-# Ribosome_quality_control_conservation
-The ribosome-associated quality control (RQC) pathway supports survival in the absence of non-stop ribosome rescue factors
+## The ribosome-associated quality control (RQC) pathway supports survival in the absence of non-stop ribosome rescue factors
+
+# Authors: Katrina Callan, Cassidy R. Prince, Heather A. Feaga
+
+# Preprint is available on biorxiv at https://www.biorxiv.org/content/10.1101/2024.07.12.603306v1
+
+# Abstract:
+Ribosomes frequently translate truncated mRNAs due to the extremely short half-life of mRNAs in bacteria. When ribosomes translate mRNA that lacks a stop codon (non-stop mRNA), they become stalled at the 3’ end of the mRNA. These ribosomes are rescued by trans-translation and the Alternative Rescue Factors (ArfA and ArfB). In most bacteria, trans-translation is essential in the absence of the Arf proteins. However, mounting evidence indicates that the Ribosome Quality Control (RQC) pathway can also rescue non-stop ribosomes. Here, we surveyed the conservation of ribosome rescue pathways in >15,000 bacterial genomes. We found that trans-translation is conserved in >97% of bacterial genomes, while the other rescue pathways are more restricted to particular phyla. We did not detect the genes encoding RqcH, a major mediator of RQC, in Proteobacteria (Pseudomonadota). We show that expression of RQC pathway components from Bacillus subtilis rescues viability in the absence of trans-translation and ArfA in Escherichia coli. Moreover, we show that the RQC pathway in B. subtilis is essential in the absence of trans-translation and ArfA. Finally, we investigated the contribution of the ribosome splitter MutS2 to the RQC pathway. Our work supports a role for RQC in non-stop ribosome rescue and provides a broad survey of ribosome rescue pathways in diverse bacterial species.
