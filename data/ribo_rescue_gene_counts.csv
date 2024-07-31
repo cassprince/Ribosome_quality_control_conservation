@@ -1,0 +1,30 @@
+phylum,total_genomes,smpB,ssrA,arfB,arfA,smrB,rqcH,mutS2,accession_for_tree
+Acidithiobacillia,14,14,14,1,0,0,14,5,GCF_003721225.1
+Acidobacteriota,46,45,45,8,0,0,8,31,GCF_004123295.1
+Actinobacteriota,3213,3148,3141,2245,1,0,0,0,GCF_012911925.1
+Alphaproteobacteria,2376,2296,2293,2022,0,0,0,0,GCF_001633145.1
+Aquificota + Campylobacterota + Deferribacterota,191,185,184,6,0,0,153,184,GCF_000421105.1
+Armatimonadota,3,3,3,1,0,0,2,3,NA
+Bdellovibrionota,6,6,6,5,0,0,5,5,NA
+Betaproteobacteria,1000,975,943,709,37,2,0,4,GCF_007830455.1
+Caldisericota/Cryosericota group,1,1,0,0,0,0,0,1,NA
+Chloroflexota,41,41,40,11,0,0,26,35,GCF_000025005.1
+Coprothermobacterota,2,2,2,0,0,0,2,2,NA
+Cyanobacteriota/Melainabacteria group,162,161,155,90,0,0,161,150,GCF_000317105.1
+Deinococcota,101,101,100,0,0,0,101,55,GCF_003336745.1
+Deltaproteobacteria,6,6,6,4,0,0,6,6,NA
+Desulfuromonadota + Desulfobacterota,185,176,176,124,0,0,77,118,GCF_014773365.1
+Dictyoglomota,2,2,2,0,0,0,2,2,NA
+FCB group,1956,1913,1910,1426,0,0,404,1781,GCF_002894645.1
+Firmicutes,2633,2551,2541,5,5,0,2557,2550,GCF_000763575.1
+Fusobacteriota,42,42,41,0,0,0,42,42,GCF_900167275.1
+Gammaproteobacteria,2704,2588,2588,2027,699,1004,0,1,GCF_003569005.1
+Mycoplasmatota,119,113,38,0,0,0,9,9,GCF_016865445.1
+Myxococcota,72,70,69,70,0,0,61,47,GCF_012933655.1
+Nitrospinae/Tectomicrobia group,2,2,2,0,0,0,0,2,NA
+Nitrospirota,13,12,12,5,0,0,5,10,GCF_900169565.1
+PVC group,211,208,208,107,0,0,7,12,GCF_016595505.1
+Spirochaetota,108,107,107,16,0,0,41,34,GCF_000332515.2
+Synergistota,15,15,15,0,0,0,15,15,GCF_000526375.1
+Thermotogota,31,29,29,0,0,0,29,29,GCF_003990895.1
+Zetaproteobacteria,4,4,4,4,0,0,0,0,NA
