@@ -1,0 +1,48 @@
+### --- GENOME ASSEMBLY DATA AND TAXONOMY --- ###
+
+# Download NCBI prokaryotic reference genomes.
+datasets download genome taxon bacteria --reference --include genome --dehydrated --filename bacteria_reference.zip 
+unzip bacteria_reference.zip -d bacteria_ref 
+datasets rehydrate --directory bacteria_ref  --gzip 
+find . -name \*.fna.gz -exec cp {} /workdir/crp86/bacteria_ref/ncbi_dataset/genomes \;   
+gzip -d *.fna.gz 
+
+# Get all NCBI Nucleotide database accessions within each assembly file.
+grep '>' *.fna /dev/null > GCF_nuc_accessions_reps.txt 
+
+# Download metadata for genomes.
+datasets summary genome taxon bacteria --reference --as-json-lines | dataformat tsv genome --fields accession,organism-name,organism-tax-id,assminfo-level,assmstats-gc-percent,assmstats-number-of-contigs,assmstats-number-of-scaffolds,checkm-completeness 
+
+# Download taxonomy/lineage for each assembly based on taxid.
+taxonkit lineage ref_taxID_list.txt | tee ref_lineage.txt 
+
+
+
+### --- 16S rRNA TREE --- ###
+
+# BLAST for 16S rRNA genes (queried using E. coli 16S rRNA gene).
+blastn -db ref_prok_rep_genomes -query 16S.fasta -max_target_seqs 100000 -perc_identity 50 –qcov_hsp_perc 50 -task blastn -outfmt 7 -out 16S_blast_hits_for_tree.csv 
+
+# Extract 16S sequences according to the subject start and end values in the BLAST output. 
+awk '{FS=","}{print $5,$12,$13}' 16S_blast_hits_for_tree.csv | xargs -n 3 sh -c 'blastdbcmd -db ref_prok_rep_genomes -entry "$0" -range "$1"-"$2" -outfmt %f >> 16S_blast_for_tree_plus.fasta' 
+awk '{FS=","}{print $5,$12,$13}' 16S_blast_hits_for_tree.csv | xargs -n 3 sh -c 'blastdbcmd -db ref_prok_rep_genomes -entry "$0" -range "$2"-"$1" -outfmt %f >> 16S_blast_for_tree_minus.fasta' 
+
+# Reverse complement 16S sequences that were on the minus strand and combine with sequences on the plus strand.
+/workdir/crp86/seqtk/seqtk seq -r 16S_blast_for_tree_minus.fasta > 16S_blast_for_tree_minus_R.fasta 
+cat 16S_blast_for_tree_plus.fasta 16S_blast_for_tree_minus_R.fasta > 16S_blast_hits_for_tree.fasta 
+
+# Align 16S genes with MAFFT. 
+/programs/mafft/bin/mafft 16S_blast_hits_for_tree.fasta > 16S_blast_hits_for_tree_align.fasta
+
+# Build the maximum-likelihood tree with Fasttree.
+/programs/FastTree-2.1.10/FastTree -nt -gtr -gamma 16S_blast_hits_for_tree_align.fasta > 16S_fasttree.tre
+
+
+
+### --- IDENTIFY RIBOSOME QUALITY CONTROL GENES --- ###
+
+# Example of HMMER search for ssrA. Repeated for all genes.
+/programs/mafft/bin/mafft ssrA.fasta > ssrA_align.fasta 
+/programs/hmmer-3.3/bin/hmmbuild ssrA_profile.hmm ssrA_align.fasta 
+/programs/hmmer-3.3/bin/nhmmer --tblout ssrA_HMMER_5e2.csv --hmmout ssrA_HMMER_5e2.hmm -E 5e-2 ssrA_profile.hmm ref_prok_rep_genomes.fasta 
+
